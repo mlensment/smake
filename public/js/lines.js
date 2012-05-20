@@ -3,5 +3,5 @@ $(document).ready(function(){
 });
 
 var Game = function() {
-  this.socket = io.connect('http://localhost:80');
+  this.socket = io.connect('http://localhost');
 };
