@@ -1,5 +1,4 @@
 var connect = require('connect')
-  , http = require('http')
   , Game = require(__dirname + '/lib/game');
 
 var app = connect()
