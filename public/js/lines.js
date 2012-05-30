@@ -4,12 +4,13 @@ $(document).ready(function() {
 
 var Game = function() {
   this.socket = io.connect('http://localhost');
+  this.snake = [[0, 0], [10, 0], [20, 0]];
   this.keyRead = false;
   this.dead = false;
   this.direction = 'r';
   this.readKey();
+  this.draw();
 };
-
 
 Game.prototype.readKey = function() {
   var self = this;
@@ -43,4 +44,24 @@ Game.prototype.readKey = function() {
       self.socket.emit('setDirection', self.direction);
     }
   });
+
+  Game.prototype.draw = function() {
+    self = this;
+    this.socket.on('tick', function(data) {
+      console.log(data)
+      self.keyRead = false;
+      self.snake.push(data);
+      var c = document.getElementById('snake');
+      var ctx = c.getContext('2d');
+      c.width = c.width;
+      if(self.dead) {
+        ctx.fillRect(0, 0, c.width, c.height);
+        ctx.fillStyle = 'rgb(255, 255, 255)';
+      } else {
+        for(var i in self.snake){
+          ctx.fillRect(self.snake[i][0], self.snake[i][1], 10, 10);
+        }
+      }
+    });
+  };
 };
