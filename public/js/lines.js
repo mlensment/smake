@@ -4,7 +4,7 @@ $(document).ready(function() {
 
 var Game = function() {
   this.socket = io.connect('http://localhost');
-  this.snake = [[0, 0], [10, 0], [20, 0]];
+  this.snakes = [[[0, 0], [10, 0], [20, 0]], [[0, 0], [10, 0], [20, 0]]];
   this.keyRead = false;
   this.dead = false;
   this.direction = 'r';
@@ -48,9 +48,10 @@ Game.prototype.readKey = function() {
   Game.prototype.draw = function() {
     self = this;
     this.socket.on('tick', function(data) {
-      console.log(data)
       self.keyRead = false;
-      self.snake.push(data);
+      for(var i in data) {
+        self.snakes[i].push(data[i]);
+      }
       var c = document.getElementById('snake');
       var ctx = c.getContext('2d');
       c.width = c.width;
@@ -58,8 +59,10 @@ Game.prototype.readKey = function() {
         ctx.fillRect(0, 0, c.width, c.height);
         ctx.fillStyle = 'rgb(255, 255, 255)';
       } else {
-        for(var i in self.snake){
-          ctx.fillRect(self.snake[i][0], self.snake[i][1], 10, 10);
+        for(var i in self.snakes){
+          for(var j in self.snakes[i]) {
+            ctx.fillRect(self.snakes[i][j][0], self.snakes[i][j][1], 10, 10);
+          }
         }
       }
     });
