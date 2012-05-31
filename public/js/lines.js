@@ -17,7 +17,7 @@ Game.prototype.initGame = function() {
   ];
   this.status = 'WAITING'
   this.keyRead = false;
-  this.socket.emit('init');
+  this.socket.emit('initGame');
 };
 
 Game.prototype.bindListeners = function() {
@@ -106,7 +106,15 @@ Game.prototype.readKey = function() {
       break;
 
       case 'OP_DISCONNECTED':
-        console.log('opponent disconnected')
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+        ctx.fillRect(0, 0, c.width, c.height);
+        ctx.fillStyle = 'rgb(255, 255, 255)';
+        ctx.font = '18px Calibri';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('Vastane lahkus mängust', c.width / 2, c.height / 2.3);
+        ctx.font = '12px Calibri';
+        ctx.fillText('Vajuta enterit, et uuesti alustada!', c.width / 2, (c.height / 2.3) + 30);
       break;
 
       case 'RUNNING':
