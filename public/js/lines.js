@@ -3,13 +3,29 @@ $(document).ready(function() {
 });
 
 var Game = function() {
-  this.socket = io.connect('http://localhost');
-  this.snakes = [[[0, 0], [10, 0], [20, 0]], [[0, 0], [10, 0], [20, 0]]];
-  this.keyRead = false;
-  this.dead = false;
-  this.direction = 'r';
+  this.socket = io.connect();
+  this.snakes = [
+    [[0, 0], [10, 0], [20, 0]], 
+    [[190, 190], [180, 190], [170, 190]]
+  ];
+  this.status = 'WAITING'
+  this.keyRead = false; 
   this.readKey();
+  this.bindListeners();
   this.draw();
+};
+
+Game.prototype.bindListeners = function() {
+  var self = this;
+  this.socket.on('tick', function(data) {
+    console.log(self.status)
+    self.status = 'RUNNING';
+    self.draw(data);
+  });
+
+  this.socket.on('opponentDisconnect', function(data) {
+    self.status= 'OP_DISCONNECTED';
+  });
 };
 
 Game.prototype.readKey = function() {
@@ -45,26 +61,52 @@ Game.prototype.readKey = function() {
     }
   });
 
-  Game.prototype.draw = function() {
-    self = this;
-    this.socket.on('tick', function(data) {
-      self.keyRead = false;
-      for(var i in data) {
-        self.snakes[i].push(data[i]);
-      }
-      var c = document.getElementById('snake');
-      var ctx = c.getContext('2d');
-      c.width = c.width;
-      if(self.dead) {
+  Game.prototype.draw = function(data) {
+    this.keyRead = false;
+    for(var i in data) {
+      this.snakes[i].push(data[i]);
+    }
+
+    var c = document.getElementById('snake');
+    var ctx = c.getContext('2d');
+    c.width = c.width;
+
+    switch(this.status) {
+      case 'WAITING':
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
         ctx.fillRect(0, 0, c.width, c.height);
         ctx.fillStyle = 'rgb(255, 255, 255)';
-      } else {
-        for(var i in self.snakes){
-          for(var j in self.snakes[i]) {
-            ctx.fillRect(self.snakes[i][j][0], self.snakes[i][j][1], 10, 10);
+        ctx.font = '20px Calibri';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('Ootan vastast...', c.width / 2, c.height / 2);
+      break;
+
+      case 'LOST':
+        console.log('you lost')
+      break;
+
+      case 'WON' :
+        console.log('you won')
+      break;
+
+      case 'OP_DISCONNECTED':
+        console.log('opponent disconnected')
+      break;
+
+      case 'RUNNING':
+        for(var i in this.snakes){
+          for(var j in this.snakes[i]) {
+            if(i == 0) {
+              ctx.fillStyle = 'rgb(255, 0, 0)';
+            } else {
+              ctx.fillStyle = 'rgb(0, 0, 255)';
+            }
+            ctx.fillRect(this.snakes[i][j][0], this.snakes[i][j][1], 10, 10);
           }
         }
-      }
-    });
+      break;
+    }
+    
   };
 };
