@@ -4,27 +4,42 @@ $(document).ready(function() {
 
 var Game = function() {
   this.socket = io.connect();
-  this.snakes = [
-    [[0, 0], [10, 0], [20, 0]], 
-    [[190, 190], [180, 190], [170, 190]]
-  ];
-  this.status = 'WAITING'
-  this.keyRead = false; 
+  this.initGame();
   this.readKey();
   this.bindListeners();
   this.draw();
 };
 
+Game.prototype.initGame = function() {
+  this.snakes = [
+    [[0, 0], [10, 0], [20, 0]], 
+    [[190, 190], [180, 190], [170, 190]]
+  ];
+  this.status = 'WAITING'
+  this.keyRead = false;
+  this.socket.emit('init');
+};
+
 Game.prototype.bindListeners = function() {
   var self = this;
   this.socket.on('tick', function(data) {
-    console.log(self.status)
     self.status = 'RUNNING';
     self.draw(data);
   });
 
+  this.socket.on('lost', function(data) {
+    self.status = 'LOST';
+    self.draw(data);
+  });
+
+  this.socket.on('won', function(data) {
+    self.status = 'WON';
+    self.draw(data);
+  });
+
   this.socket.on('opponentDisconnect', function(data) {
-    self.status= 'OP_DISCONNECTED';
+    self.status = 'OP_DISCONNECTED';
+    self.draw(data);
   });
 };
 
@@ -50,22 +65,22 @@ Game.prototype.readKey = function() {
             self.direction = 'r';
         break;
         case 13:
-          if(self.dead){
-            self.resetGame();
+          if(['LOST', 'WON', 'OP_DISCONNECTED'].indexOf(self.status) > -1) {
+            self.initGame();
           }
         break;
       }
-      if(!self.dead)
+
+      if(self.status == 'RUNNING')
         self.keyRead = true;
+
       self.socket.emit('setDirection', self.direction);
     }
+
   });
 
   Game.prototype.draw = function(data) {
     this.keyRead = false;
-    for(var i in data) {
-      this.snakes[i].push(data[i]);
-    }
 
     var c = document.getElementById('snake');
     var ctx = c.getContext('2d');
@@ -95,6 +110,10 @@ Game.prototype.readKey = function() {
       break;
 
       case 'RUNNING':
+        for(var i in data) {
+          this.snakes[i].push(data[i]);
+        }
+
         for(var i in this.snakes){
           for(var j in this.snakes[i]) {
             if(i == 0) {
@@ -107,6 +126,5 @@ Game.prototype.readKey = function() {
         }
       break;
     }
-    
   };
 };
