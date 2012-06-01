@@ -1,0 +1,11 @@
+{
+  "name": "multiplayer-snake",
+  "version": "0.0.1",
+  "dependencies": {
+    "connect": "2.3.0",
+    "socket.io": "0.9.6"
+  },
+  "engines": {
+    "node": "0.6.17"
+  }
+}
