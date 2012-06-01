@@ -3,11 +3,12 @@ $(document).ready(function() {
 });
 
 var Game = function() {
+  //this.draw(); (see ei tööta (this.draw() is not a function)
   this.socket = io.connect();
   this.initGame();
   this.readKey();
   this.bindListeners();
-  this.draw();
+  //this.draw(); (see töötab)
 };
 
 Game.prototype.initGame = function() {
