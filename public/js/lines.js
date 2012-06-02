@@ -120,9 +120,16 @@ Game.prototype.draw = function(data) {
 
     case 'RUNNING':
       for(var i in data) {
-        this.snakes[i].push(data[i].snake);
+        if(i == 0) {
+          ctx.fillStyle = 'rgb(0, 255, 0)';
+          ctx.fillRect(data[i][0][0], data[i][0][1], 10, 10);
+          ctx.fillRect(data[i][1][0], data[i][1][1], 10, 10);
+          continue;
+        }
+
+        this.snakes[i-1].push(data[i].snake);
         if(data[i].shift)
-          this.snakes[i].shift();
+          this.snakes[i-1].shift();
       }
 
       for(var i in this.snakes){
