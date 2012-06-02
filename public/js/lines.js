@@ -4,9 +4,9 @@ $(document).ready(function() {
 
 var Game = function() {
   this.socket = io.connect();
-  this.initGame();
   this.readKey();
   this.bindListeners();
+  this.initGame();
 };
 
 Game.prototype.initGame = function() {
@@ -120,7 +120,9 @@ Game.prototype.draw = function(data) {
 
     case 'RUNNING':
       for(var i in data) {
-        this.snakes[i].push(data[i]);
+        this.snakes[i].push(data[i].snake);
+        if(data[i].shift)
+          this.snakes[i].shift();
       }
 
       for(var i in this.snakes){
