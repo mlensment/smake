@@ -102,8 +102,8 @@ Game.prototype.draw = function(data) {
       ctx.textBaseline = 'middle';
       ctx.fillText('Mäng läbi!', c.width / 2, c.height / 2.3);
       ctx.font = '10px Calibri';
-      ctx.fillText('Punane uss sai 18 punkti', c.width / 2, (c.height / 2.3) + 20);
-      ctx.fillText('Sinine uss sai 18 punkti', c.width / 2, (c.height / 2.3) + 40);
+      ctx.fillText('Kogusid ' + data.yourPoints + ' punkti', c.width / 2, (c.height / 2.3) + 20);
+      ctx.fillText('Vastane kogus ' + data.opPoints + ' punkti', c.width / 2, (c.height / 2.3) + 40);
       ctx.fillText('Vajuta enterit, et uuesti alustada!', c.width / 2, (c.height / 2.3) + 60);
     break;
 
