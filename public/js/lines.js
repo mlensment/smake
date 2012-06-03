@@ -27,13 +27,8 @@ Game.prototype.bindListeners = function() {
     self.draw(data);
   });
 
-  this.socket.on('lost', function(data) {
-    self.status = 'LOST';
-    self.draw(data);
-  });
-
-  this.socket.on('won', function(data) {
-    self.status = 'WON';
+  this.socket.on('gameover', function(data) {
+    self.status = 'GAME_OVER';
     self.draw(data);
   });
 
@@ -65,7 +60,7 @@ Game.prototype.readKey = function() {
             self.direction = 'r';
         break;
         case 13:
-          if(['LOST', 'WON', 'OP_DISCONNECTED'].indexOf(self.status) > -1) {
+          if(['GAME_OVER', 'OP_DISCONNECTED'].indexOf(self.status) > -1) {
             self.initGame();
           }
         break;
@@ -98,12 +93,18 @@ Game.prototype.draw = function(data) {
       ctx.fillText('Ootan vastast...', c.width / 2, c.height / 2);
     break;
 
-    case 'LOST':
-      console.log('you lost')
-    break;
-
-    case 'WON' :
-      console.log('you won')
+    case 'GAME_OVER':
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+      ctx.fillRect(0, 0, c.width, c.height);
+      ctx.fillStyle = 'rgb(255, 255, 255)';
+      ctx.font = '18px Calibri';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('Mäng läbi!', c.width / 2, c.height / 2.3);
+      ctx.font = '10px Calibri';
+      ctx.fillText('Punane uss sai 18 punkti', c.width / 2, (c.height / 2.3) + 20);
+      ctx.fillText('Sinine uss sai 18 punkti', c.width / 2, (c.height / 2.3) + 40);
+      ctx.fillText('Vajuta enterit, et uuesti alustada!', c.width / 2, (c.height / 2.3) + 60);
     break;
 
     case 'OP_DISCONNECTED':
